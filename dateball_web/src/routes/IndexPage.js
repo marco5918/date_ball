@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'dva';
 import styles from './IndexPage.css';
 import MainLayout from '../components/MainLayout/MainLayout';
-import { Router, Route, Switch, IndexRedirect,withRouter  } from 'dva/router';
+import {  Route, Switch  } from 'dva/router';
 import dynamic from 'dva/dynamic';
 
 function IndexPage({location,history}) {
@@ -32,7 +32,10 @@ function IndexPage({location,history}) {
     component:()=>import('./UsersPage'),
   });
 
+
+
   return (
+    <span>
     <MainLayout location={location} history={history} >
         <Switch>
         <Route exact path='/' component={MePage} />
@@ -43,6 +46,7 @@ function IndexPage({location,history}) {
         <Route path='/me' component={MePage} />
         </Switch>
     </MainLayout>
+    </span>
   );
 }
 

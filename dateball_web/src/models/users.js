@@ -68,10 +68,20 @@ export default {
 					payload:{id, values},
 				});
 		},
+		*login({payload:{value}},{call,put}){
+			const {data} = yield call(usersService.login, value);
+			yield put({
+				type: 'save_login',
+				payload: {data},
+			})
+		},
 	},
 	reducers:{
 		save(state,{payload:{data:item}}){
 			return {...state, item};
+		},
+		save_login(state,{payload:{data:item}}){
+			return {...state, item}
 		},
 	}
 }

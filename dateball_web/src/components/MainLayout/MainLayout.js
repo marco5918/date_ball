@@ -6,11 +6,6 @@ import { TabBar } from 'antd-mobile';
 
 class MainLayout extends React.Component {
 
-	constructor(props){
-		super(props);
-	};
-
-
 	render(){
 		const history = this.props.history;
 		return (

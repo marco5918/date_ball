@@ -3,11 +3,11 @@ import { connect } from 'dva';
 import UserComponent from '../components/Users/Users';
 import styles from './UsersPage.css';
 
-function Users({location,match}){
+function Users({location,history}){
 
 	return (
 			<div className={styles.normal}>
-			<UserComponent id={match.params.id} />
+			<UserComponent />
 			</div>
 	);
 }

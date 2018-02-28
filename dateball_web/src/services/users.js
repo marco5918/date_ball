@@ -31,3 +31,11 @@ export function create(values){
 		body: JSON.stringify(values),
 	});
 }
+
+export function login(value){
+	return request('/api/user/signIn.json',{
+		method:'POST',
+		body: JSON.stringify(value),
+	})
+
+}

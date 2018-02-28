@@ -16,10 +16,17 @@ module.exports = {
       code:''
     }
 
+    if(formData.login_user_phone !== undefined){
+      formData.phone = formData.login_user_phone;
+      formData.login_user = formData.login_user_phone;
+    }
+
     let userResult = await userInfoService.signIn(formData)
     if(userResult){
       if(userResult instanceof Sequelize.Model && (formData.phone === userResult.get('phone') || formData.login_user === userResult.get('login_user'))){
         result.success = true
+        result.data = {};
+        result.data.id = userResult.get('id')
       }else{
         result.message = userCode.FAIL_USER_NAME_OR_PASSWORD_ERROR
         result.code = 'FAIL_USER_NAME_OR_PASSWORD_ERROR'
