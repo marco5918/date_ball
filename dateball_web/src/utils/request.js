@@ -19,18 +19,40 @@ function checkStatus(response) {
  */
 async function request(url, options) {
   //options = {...options, credentials:'include'};
-  const response = await fetch(url, {...options, headers:{'Content-Type':'application/json'}});
+  console.log(localStorage.getItem('data_ball_expires'))
+  let token = null;
+  let expires = null;
+  if(window.localStorage){
+    token = localStorage.getItem('data_ball_token');
+    expires = localStorage.getItem('data_ball_expires');
+  }
+
+  if(url.match('signIn.json') == null && url.match('signUp.json') == null){
+    if(expires == null || expires <= Date.now()){
+      let ret = {
+        data,
+        headers:{},
+      }
+      ret.data = null;
+      ret.headers['x-access-token-expires'] = true;
+      return ret;
+    }
+  }
+
+  const response = await fetch(url, 
+    {...options, headers:{'Content-Type':'application/json','x-access-token':token}});
   checkStatus(response);
   const data = await response.json();
-  const ret = {
+  let ret = {
     data,
     headers:{},
   }
 
-  if(response.headers.get('x-total-count')){
-    ret.headers['x-total-count'] = response.headers.get('x-total-count');
-  }
-
+  ret.headers['x-access-token-expires'] = false;
+  // if(response.headers.get('x-total-count')){
+  //   ret.headers['x-total-count'] = response.headers.get('x-total-count');
+  // }
+  console.log("request: ",ret);
   return ret;
 }
 

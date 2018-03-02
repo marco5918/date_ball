@@ -1,6 +1,6 @@
 import queryString from 'query-string';
 import * as usersService from '../services/users';
-
+import {routerRedux} from 'dva/router';
 
 export default {
 	namespace: 'me',
@@ -13,9 +13,10 @@ export default {
 			return history.listen(({pathname, search})=>{
 				console.log('pathname=',pathname);
 				console.log('search:',search);
-				const id = queryString.parse(search);
-				console.log('id:',id);
+				const search_value = queryString.parse(search);
+				console.log('search_value:',search_value);
 				if(pathname === '/me'){
+					const id = {id:localStorage.getItem('data_ball_id')}
 					dispatch({
 						type: 'fetch',
 						payload:id
@@ -33,6 +34,7 @@ export default {
 					type: 'save', 
 					payload:{
 						data,
+						headers
 					},
 				});
 		},
@@ -75,13 +77,25 @@ export default {
 				payload: {data},
 			})
 		},
+		*signup({payload:{value}},{call,put}){
+			const {data} = yield call(usersService.signup, value);
+			yield put({
+				type:'save_signup',
+				payload: {data},
+			})
+		}
 	},
 	reducers:{
-		save(state,{payload:{data:item}}){
-			return {...state, item};
+		save(state,{payload:{data:item, headers}}){
+			return {...state, item, headers};
 		},
 		save_login(state,{payload:{data:item}}){
-			return {...state, item}
+			let headers = null;
+			return {...state, item, headers}
+		},
+		save_signup(state,{payload:{data:item}}){
+			let headers = null;
+			return {...state, item, headers}
 		},
 	}
 }

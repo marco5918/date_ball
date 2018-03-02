@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import { connect } from 'dva';
-import { WhiteSpace, ImagePicker, List, InputItem } from 'antd-mobile';
+import { WhiteSpace, ImagePicker, List, InputItem, Button,Modal } from 'antd-mobile';
 import { createForm } from 'rc-form';
 import { routerRedux } from 'dva/router';
 import queryString from 'query-string';
@@ -8,6 +8,8 @@ import styles from './Users.css';
 import ImageHeader from './ImageHeader';
 import UserModal from './UserModal';
 import TransitionGroup from '../Transition/TransitionGroup';
+
+
 
 class Users extends Component{
 	constructor(props){
@@ -109,13 +111,38 @@ class Users extends Component{
 		);
 	}
 
+	showAlert = () => {
+		const alert = Modal.alert;
+		const alertInstance = alert('退出', '确定要退出登录?', [
+			{ text: '取消', onPress: () => {console.log('cancel')}, style: 'default' },
+			{ text: '确定', onPress: () => {
+				if(window.localStorage){
+					localStorage.clear();
+					this.props.history.push('/me');
+				}
+			} },
+		]);
+		setTimeout(() => {
+			alertInstance.close();
+		}, 500000);
+	};
+
 	render(){
-		console.log(this.props.item)
-		if(this.props.item === null){
+		console.log("user headers",this.props.headers);
+
+		if(this.props.headers && this.props.headers['x-access-token-expires']){
+			const history = this.props.history;
+			history.push('/login');
+			return null;
+		}
+
+		if(this.props.headers === null || this.props.item === null){
 			return (<div></div>);
 		}else{
+			
 			const Item = List.Item;
 			const {success, message, data} = this.props.item;
+			
 
 			if(success)
 			{
@@ -239,6 +266,9 @@ class Users extends Component{
 							>
 							球衣号码
 							</Item>
+							<WhiteSpace size="xl" />
+							<WhiteSpace size="xl" />
+							<Button type="warning" size='large' onClick={this.showAlert}>退出登录</Button>
 						</List>
 						</div>
 						</div>
@@ -260,10 +290,11 @@ class Users extends Component{
 
 
 function mapStateToProps(state){
-	const {item} = state.me;
+	const {item, headers} = state.me;
 	return {
 		loading: state.loading.models.users,
 		item,
+		headers
 	};
 }
 

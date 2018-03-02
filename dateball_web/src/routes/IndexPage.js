@@ -32,13 +32,33 @@ function IndexPage({location,history}) {
     component:()=>import('./UsersPage'),
   });
 
+  const filterPage = ()=>{
+    let token = null;
+    let expires = null;
+    if(window.localStorage){
+      token = localStorage.getItem('data_ball_token');
+      expires = localStorage.getItem('data_ball_expires');
+    }
+
+    let push_url = "/login";
+
+    if(token !== null && expires !== null){
+      if(expires > Date.now()){
+        push_url = "/me";
+      }
+    }
+
+    history.push(push_url);
+
+    return null;
+  }
 
 
   return (
     <span>
     <MainLayout location={location} history={history} >
         <Switch>
-        <Route exact path='/' component={MePage} />
+        <Route exact path='/' component={filterPage} />
         <Route path='/game' component={GamePage} />
         <Route path='/team' component={TeamPage} />
         <Route path='/pk' component={PkPage} />

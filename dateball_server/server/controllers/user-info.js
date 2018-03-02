@@ -4,8 +4,46 @@ const uploadFile = require('./../utils/upload')
 const passport = require('../utils/passport')
 const log4js = require('log4js')
 const Sequelize = require('sequelize')
+const moment = require('moment')
+const {jwt_build, jwt_decode} = require('./../utils/jwt')
+
 
 module.exports = {
+
+  async verifyToken(ctx, next){
+
+    if(ctx.path.match("signIn.json") == null && ctx.path.match('signUp.json') == null){
+      const token = ctx.header["x-access-token"];
+      if (token) {
+        try { 
+          let decoded = jwt_decode(token);
+          if(decoded){
+            console.log("decoded token",decoded.exp);
+            if (decoded.exp <= Date.now()) {
+                ctx.response.status = 401;
+                ctx.body = "token expired";
+                return;
+            }
+          }else{
+            ctx.response.status = 401;
+            ctx.body = "invalidate token";
+            return;
+          }
+      
+        }catch (err) {
+          ctx.response.status = 401;
+          ctx.body = err.message;
+          return;
+        } 
+      }else {
+        ctx.response.status = 401;
+        ctx.body = "token is none";
+        return;
+      }
+    }
+
+    return next();
+  },
 
   async signIn(ctx){
     let formData = ctx.request.body
@@ -25,8 +63,14 @@ module.exports = {
     if(userResult){
       if(userResult instanceof Sequelize.Model && (formData.phone === userResult.get('phone') || formData.login_user === userResult.get('login_user'))){
         result.success = true
+        const expires = moment().add('days', 1).valueOf()
+        const token = jwt_build(userResult.get('id'), userResult.get('login_user'), expires )
         result.data = {};
         result.data.id = userResult.get('id')
+        result.data.login_user = userResult.get('login_user')
+        result.data.exp =  expires
+        result.data.token = token
+
       }else{
         result.message = userCode.FAIL_USER_NAME_OR_PASSWORD_ERROR
         result.code = 'FAIL_USER_NAME_OR_PASSWORD_ERROR'
@@ -87,29 +131,36 @@ module.exports = {
       phone: formData.phone,
       favicon: (formData.favicon != null) ? formData.favicon : '',
       password: hashPassword,
-      name: formData.name,
-      nick_name: formData.nick_name,
-      city: formData.city,
-      age: formData.age,
-      gender: formData.gender,
-      job: formData.job,
-      hobby: formData.job,
+      name: (formData.name !== undefined) ? formData.name : '',
+      nick_name: (formData.nick_name !== undefined) ?  formData.nick_name: '',
+      city:  (formData.city !== undefined) ?  formData.city: '',
+      age:  (formData.age !== undefined) ? formData.age : '1',
+      gender: (formData.gender !== undefined) ? formData.gender: '1',
+      job: (formData.job !== undefined) ? formData.job: '',
+      hobby: (formData.hobby !== undefined) ?formData.hobby: '',
       login_user: formData.login_user,
       create_time: new Date().getTime(),
       modified_time: new Date().getTime(),
       last_login_time: new Date().getTime(),
     },{
-        height: formData.height,
-        weight: formData.weight,
-        jersey_number: formData.jersey_number,
-        position: formData.position,
-        nba_team: formData.nba_team,
-        love_star: formData.love_star,
-        strong_point: formData.strong_point,
+        height: (formData.height !== undefined) ? formData.height: '1',
+        weight: (formData.weight !== undefined) ? formData.weight: '1',
+        jersey_number: (formData.weight !== undefined) ? formData.weight: '1',
+        position: (formData.position !== undefined) ? formData.position: '',
+        nba_team: (formData.nba_team !== undefined) ? formData.nba_team: '',
+        love_star: (formData.love_star !== undefined) ? formData.love_star: '',
+        strong_point: (formData.strong_point !== undefined) ? formData.strong_point: '',
     })
 
     if(userResult && userResult.success){
       result.success = true
+      const expires = moment().add('days', 1).valueOf()
+      const token = jwt_build(userResult.id, userResult.login_user, expires )
+      result.data = {};
+      result.data.id = userResult.id
+      result.data.login_user = userResult.login_user
+      result.data.exp =  expires
+      result.data.token = token
     }else{
       result.code = 'ERROR_SYS'
       result.message = userCode.ERROR_SYS

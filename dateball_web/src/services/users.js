@@ -37,5 +37,11 @@ export function login(value){
 		method:'POST',
 		body: JSON.stringify(value),
 	})
+}
 
+export function signup(value){
+	return request('/api/user/signUp.json',{
+		method:'POST',
+		body: JSON.stringify(value),
+	})
 }

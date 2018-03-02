@@ -29,6 +29,8 @@
       await MeModel.create(user).then(function(me_obj){
         me = me_obj
         console.log("me create : ",me_obj.get({'plain': true}))
+        result.id = me.get("id")
+        result.login_user = me.get("login_user")
         result.success = true;
       }).catch(function(err){
         result.success = false;
@@ -224,7 +226,7 @@
               result.message = userCode.ERROR_PASSWORD
               return result
             }
-            if(userInfo.password !== userInfo.confirmPassword){
+            if(userInfo.password !== userInfo.password_confirm){
               result.message = userCode.ERROR_PASSWORD_CONFORM
               return result
             }
@@ -235,7 +237,7 @@
                 return result
               }
 
-              if(userInfo.password !== userInfo.confirmPassword){
+              if(userInfo.password !== userInfo.password_confirm){
                 result.message = userCode.ERROR_PASSWORD_CONFORM
                 return result
               }

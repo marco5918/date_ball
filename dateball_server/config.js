@@ -2,6 +2,10 @@ const config = {
   port:3002,
 
   //database setting
+  jwt:{
+    secret:'marco',
+    encode:'HS512',
+  },
   database:{
     DATABASE:'date_ball',
     USERNAME:'root',

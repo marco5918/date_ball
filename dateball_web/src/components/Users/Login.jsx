@@ -33,8 +33,15 @@ class Login extends Component{
         if(this.props.item !== null){
             const {success, message, data} = this.props.item;
             if(success){
-                const {id} = data;
-                history.push('/me?id='+id);
+                const {id, login_user, exp, token} = data;
+                if(window.localStorage){
+                    localStorage.setItem('data_ball_id',id);
+                    localStorage.setItem('data_ball_login_user',login_user);
+                    localStorage.setItem('data_ball_expires',exp);
+                    localStorage.setItem('data_ball_token',token);
+                }
+
+                history.push('/me');
                 return null;
             }else{
                 login_error = <span style={{color:'red'}}>{message}</span>

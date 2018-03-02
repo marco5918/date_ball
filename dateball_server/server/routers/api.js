@@ -3,6 +3,7 @@ const userInfoController = require('./../controllers/user-info')
 
 const router = new Router()
 const routers = router
+  .all('/*',userInfoController.verifyToken)
   .get('/user/getUserList.json',userInfoController.getUserList)
   .get('/user/getUserInfo.json',userInfoController.getLoginUserInfo)
   .post('/user/signIn.json',userInfoController.signIn)

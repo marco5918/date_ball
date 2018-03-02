@@ -7,7 +7,7 @@ function Users({location,history}){
 
 	return (
 			<div className={styles.normal}>
-			<UserComponent />
+			<UserComponent history={history} />
 			</div>
 	);
 }
