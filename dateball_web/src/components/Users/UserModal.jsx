@@ -1,6 +1,7 @@
 import React , { Component } from 'react';
 import { Toast, Icon, Button, InputItem, NavBar} from 'antd-mobile';
 import ImagePickerModal from './ImagePickerModal';
+import config from './../../../config';
 
 class UserEditPage extends Component {
 	constructor(props){
@@ -44,8 +45,9 @@ class UserEditPage extends Component {
 	render(){
 		const { title, editname, name, value, type, placeholder, extra } = this.props;
 		let content;
+		const img_src = config.api + value;
 		if(type === 'img'){
-			let url = "http://192.168.1.103:3002"+value;
+			let url = img_src;
 			content = <ImagePickerModal
 				src={url}
 				onChange={this.onChange}

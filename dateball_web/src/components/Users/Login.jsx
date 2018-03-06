@@ -21,11 +21,14 @@ class Login extends Component{
                 this.props.dispatch({
                     type: 'me/login',
                     payload:{value},
+                }).then(()=>{
+                    console.log('dispatch login');
+                }).catch((reason)=>{
+                    console.error('dispatch login:',reason.message);
                 });
-            }   
+            }
         });
-      }
-
+    }
 
     render(){
         let login_error = "";

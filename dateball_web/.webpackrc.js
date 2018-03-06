@@ -1,12 +1,13 @@
 import pxtorem from 'postcss-pxtorem';
 const path = require( 'path' );
+import config from './config';
 
 export default{
 	"entry":"src/index.js",
 	"disableCSSModules": false,
 	"proxy":{
 		"/api":{
-			"target":"http://192.168.1.103:3002/api/",
+			"target":config.api+"/api/",
 			"changeOrigin":true,
 			"pathRewrite":{"^/api":""}
 		}

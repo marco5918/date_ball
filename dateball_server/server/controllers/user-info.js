@@ -21,23 +21,28 @@ module.exports = {
             console.log("decoded token",decoded.exp);
             if (decoded.exp <= Date.now()) {
                 ctx.response.status = 401;
+                ctx.response.message = "token expired";
                 ctx.body = "token expired";
                 return;
             }
           }else{
             ctx.response.status = 401;
+            ctx.response.message = "invalidate token";
             ctx.body = "invalidate token";
             return;
           }
       
         }catch (err) {
           ctx.response.status = 401;
+          ctx.response.message = err.message;
           ctx.body = err.message;
           return;
         } 
       }else {
         ctx.response.status = 401;
+        ctx.response.message = "token is empty";
         ctx.body = "token is none";
+        
         return;
       }
     }

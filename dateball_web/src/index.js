@@ -1,14 +1,17 @@
 import dva from 'dva';
 import createLoading from 'dva-loading';
 import createHistory from 'history/createBrowserHistory';
+import handleErr from './utils/handleErr';
 import './index.css';
 
 const ERROR_MSG_DURATION = 3;
 // 1. Initialize
 const app = dva({
 	history:createHistory(),
-	onError(e){
+	onError(e,dispatch){
 		console.error(e.message, ERROR_MSG_DURATION);
+		handleErr(e,dispatch);
+		throw new Error(e.message)
 	}
 });
 
@@ -20,6 +23,8 @@ const app = dva({
 
 // 4. Router
 app.router(require('./router').default);
+
+
 
 window.gApp = app;
 // 5. Start

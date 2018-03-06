@@ -1,8 +1,9 @@
 import styles from './Users.css';
-
+import config from './../../../config';
 function ImageHeader({src}){
+	const img_src = config.api + src;
 	return (
-		<img className={styles.header} src={"http://192.168.1.103:3002"+src} alt='name' />
+		<img className={styles.header} src={img_src} alt='name' />
 	);
 }
 

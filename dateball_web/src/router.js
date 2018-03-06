@@ -24,13 +24,18 @@ function RouterConfig({ history, app }) {
     ],
     component:()=>import('./routes/SignUpPage'),
   });
-	
+  
+  const ErrorPage = dynamic({
+    app,
+    component:()=>import('./routes/ErrorPage')
+  });
 
   return (
     <Router history={history}>
 			<Switch>
       <Route exact path='/login' component={LoginPage} />
       <Route exact path='/signup' component={SignUpPage} />
+      <Route exact path='/error' component={ErrorPage} />
 			<Route path='/' component={IndexPage}  />
 			</Switch>
 		</Router>

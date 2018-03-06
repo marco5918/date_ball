@@ -83,7 +83,10 @@ export default {
 				type:'save_signup',
 				payload: {data},
 			})
-		}
+		},
+		*gotoLogin({payload:{value}},{call, put}){
+			yield put(routerRedux.push('/login'));
+		},
 	},
 	reducers:{
 		save(state,{payload:{data:item, headers}}){

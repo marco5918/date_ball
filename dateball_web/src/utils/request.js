@@ -30,7 +30,7 @@ async function request(url, options) {
   if(url.match('signIn.json') == null && url.match('signUp.json') == null){
     if(expires == null || expires <= Date.now()){
       let ret = {
-        data,
+        data:null,
         headers:{},
       }
       ret.data = null;
@@ -41,19 +41,24 @@ async function request(url, options) {
 
   const response = await fetch(url, 
     {...options, headers:{'Content-Type':'application/json','x-access-token':token}});
-  checkStatus(response);
-  const data = await response.json();
-  let ret = {
-    data,
-    headers:{},
+  
+  const res = checkStatus(response);
+  if(res !== null){
+    const data = await response.json();
+    let ret = {
+      data,
+      headers:{},
+    }
+
+    ret.headers['x-access-token-expires'] = false;
+    // if(response.headers.get('x-total-count')){
+    //   ret.headers['x-total-count'] = response.headers.get('x-total-count');
+    // }
+    console.log("request: ",ret);
+    return ret;
   }
 
-  ret.headers['x-access-token-expires'] = false;
-  // if(response.headers.get('x-total-count')){
-  //   ret.headers['x-total-count'] = response.headers.get('x-total-count');
-  // }
-  console.log("request: ",ret);
-  return ret;
+  return null;
 }
 
 export default request;
