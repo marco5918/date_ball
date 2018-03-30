@@ -58,8 +58,8 @@ class SignUp extends Component{
         let signup_error = "";
 
         const history = this.props.history;
-        if(this.props.item !== null){
-            const {success, message, data} = this.props.item;
+        if(this.props.item_signup !== null){
+            const {success, message, data} = this.props.item_signup;
             if(success){
                 const {id, login_user, exp, token} = data;
                 if(window.localStorage){
@@ -172,10 +172,10 @@ class SignUp extends Component{
 }
 
 function mapStateToProps(state, ownProps){
-    const {item} = state.me;
+    const {item_signup} = state.me;
 	return {
 		loading: state.loading.models.users,
-		item,
+		item_signup,
 	};
 }
 

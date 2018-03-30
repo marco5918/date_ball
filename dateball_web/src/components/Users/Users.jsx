@@ -5,7 +5,7 @@ import { createForm } from 'rc-form';
 import { routerRedux } from 'dva/router';
 import queryString from 'query-string';
 import styles from './Users.css';
-import ImageHeader from './ImageHeader';
+import ImageHeader from './../../utils/ImageHeader';
 import UserModal from './UserModal';
 import TransitionGroup from '../Transition/TransitionGroup';
 

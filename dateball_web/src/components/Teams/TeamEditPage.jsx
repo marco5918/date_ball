@@ -1,9 +1,9 @@
 import React , { Component } from 'react';
-import { Toast, Icon, Button, InputItem, NavBar} from 'antd-mobile';
+import { Toast, Icon, Button, InputItem, NavBar, TextareaItem } from 'antd-mobile';
 import ImagePickerModal from './../../utils/ImagePickerModal';
 import config from './../../../config';
 
-class UserEditPage extends Component {
+class TeamEditPage extends Component {
 	constructor(props){
 		super(props);
 		this.state = {
@@ -12,9 +12,14 @@ class UserEditPage extends Component {
 			hasError:false,
 		};
 	};
+	 
+	componentWillReceiveProps(nextProps){
+		if(nextProps.value !== this.props.value){
+			this.setState({value:nextProps.value,});
+		}
+	};
 
-	componentDidMount() {
-
+	componentDidMount() {		
 		if(this.autoFocusInst !== undefined){
 			this.autoFocusInst.focus();
 		}
@@ -46,13 +51,24 @@ class UserEditPage extends Component {
 		const { title, editname, name, value, type, placeholder, extra } = this.props;
 		let content;
 		const img_src = config.api + value;
-		
 		if(type === 'img'){
 			let url = img_src;
 			content = <ImagePickerModal
 				src={url}
 				onChange={this.onChange}
 			/>
+		}else if(type === 'text_area'){
+			content = <TextareaItem
+				title={editname}
+				placeholder={placeholder}
+				value={this.state.value}
+				error={this.state.hasError}
+				onErrorClick={this.onErrorClick}
+				rows={8}
+				count={200}
+				onChange={this.onChange}
+				clear
+          	/>
 		}else{
 			content = <InputItem
 				name={name}
@@ -88,4 +104,4 @@ class UserEditPage extends Component {
 	}
 }
 
-export default UserEditPage;
+export default TeamEditPage;

@@ -8,7 +8,7 @@ let MeModel = model.me,
 MeModel.hasOne(HobbyBasketballInfoModel)
 HobbyBasketballInfoModel.belongsTo(MeModel)
 
-MeModel.hasOne(PlayerModel)
+MeModel.hasMany(PlayerModel)
 PlayerModel.belongsTo(MeModel)
 
 TeamModel.hasMany(PlayerModel)

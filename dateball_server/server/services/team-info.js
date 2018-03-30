@@ -14,7 +14,7 @@ const _ = require('lodash')
 
 MeModel.hasOne(HobbyBasketballInfoModel)
 HobbyBasketballInfoModel.belongsTo(MeModel)
-MeModel.hasOne(PlayerModel)
+MeModel.hasMany(PlayerModel)
 PlayerModel.belongsTo(MeModel)
 TeamModel.hasMany(PlayerModel)
 PlayerModel.belongsTo(TeamModel)
@@ -151,18 +151,52 @@ const team = {
 
     /**
      * 获取所有球队列表资料
-     * 
+     * @param {string} meid 我的id
+     * @return {object | null} 查找球队列表信息
      */
-    async getTeamList(){
+    async getTeamList(meid){
 
-        let resultData = [];
+        let resultData = {};
+        let meModelArr = await MeModel.findById(meid)
 
-        let teamModelArr = await TeamModel.findAll()
-        if(teamModelArr !== null && teamModelArr.length > 0){
-           for(let i = 0; i<teamModelArr.length; i++){
-             let data = teamModelArr[i]
-             resultData.push(data)
-           }
+        if(meModelArr != null){
+            resultData.me = meModelArr
+            resultData.hobby_info = await meModelArr.getHobby_basketball_info()
+            resultData.team_players = [];
+
+            let playerModelArr = await meModelArr.getPlayers()
+            if(playerModelArr !== null  && playerModelArr.length > 0){
+                for(let i = 0; i<playerModelArr.length;i++){
+                    let team_players_obj = {};
+                    let data = playerModelArr[i]
+                    let teamModelArr = await TeamModel.findById(data.teamId)
+                    if(teamModelArr !== null){
+                        team_players_obj.team = teamModelArr;
+                        
+                        let playerModelArrBelongTeam = await teamModelArr.getPlayers();
+                        if(playerModelArrBelongTeam !== null && playerModelArrBelongTeam.length > 0){
+                            team_players_obj.players = new Array(playerModelArrBelongTeam.length);
+                            for(let j = 0; j < playerModelArrBelongTeam.length; j++){
+                                team_players_obj.players[j] = {};
+                                let playerInfoModal = playerModelArrBelongTeam[j];
+                                team_players_obj.players[j].player = playerInfoModal;
+                                let playerInfoMeModal = await playerInfoModal.getMe();
+                                team_players_obj.players[j].me = playerInfoMeModal;
+                                let playerInfoMeHobbyModal = await playerInfoMeModal.getHobby_basketball_info();
+                                team_players_obj.players[j].hobby_info = playerInfoMeHobbyModal;
+                            }
+                        }       
+                    }
+
+                    resultData.team_players.push(team_players_obj);
+                }
+
+            }else{
+                return resultData
+            }
+
+        }else{
+            return resultData
         }
 
         return resultData

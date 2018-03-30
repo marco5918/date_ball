@@ -6,6 +6,8 @@ export default {
 	namespace: 'me',
 	state:{
 		item:null,
+		item_login:null,
+		item_signup:null,
 	},
 
 	subscriptions: {
@@ -92,13 +94,13 @@ export default {
 		save(state,{payload:{data:item, headers}}){
 			return {...state, item, headers};
 		},
-		save_login(state,{payload:{data:item}}){
+		save_login(state,{payload:{data:item_login}}){
 			let headers = null;
-			return {...state, item, headers}
+			return {...state, item_login, headers}
 		},
-		save_signup(state,{payload:{data:item}}){
+		save_signup(state,{payload:{data:item_signup}}){
 			let headers = null;
-			return {...state, item, headers}
+			return {...state, item_signup, headers}
 		},
 	}
 }

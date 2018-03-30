@@ -33,8 +33,8 @@ class Login extends Component{
     render(){
         let login_error = "";
         const history = this.props.history;
-        if(this.props.item !== null){
-            const {success, message, data} = this.props.item;
+        if(this.props.item_login !== null){
+            const {success, message, data} = this.props.item_login;
             if(success){
                 const {id, login_user, exp, token} = data;
                 if(window.localStorage){
@@ -99,10 +99,10 @@ class Login extends Component{
 }
 
 function mapStateToProps(state, ownProps){
-    const {item} = state.me;
+    const {item_login} = state.me;
 	return {
 		loading: state.loading.models.users,
-		item,
+		item_login,
 	};
 }
 

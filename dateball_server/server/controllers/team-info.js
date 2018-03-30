@@ -162,20 +162,36 @@ module.exports = {
       ctx.body = result
   },
 
+  async removeTeam(ctx){
+
+  },
+
+  async joinTeam(ctx){
+
+  },
+
+  async outTeam(ctx){
+
+  },
+
   async getTeamList(ctx){
 
         let result = {
-        success: false,
-        message: '',
-        data: null,
+            success: false,
+            message: '',
+            data: null,
         }
 
-        let teamList = await teamInfoService.getTeamList()
-        if(teamList){
-            result.data = teamList
-            result.success = true
-            let count = result.data !== null ? result.data.length : 0
-            ctx.set("x-total-count", count);
+        const {meid} =  ctx.query
+        if(meid !== null){
+            let teamList = await teamInfoService.getTeamList(meid)
+            if(teamList){
+                result.data = teamList
+                result.success = true
+            }else{
+                result.code = 'FAIL_NO_TEAM'
+                result.message = teamCode.FAIL_NO_TEAM
+            }
         }else{
             result.code = 'FAIL_NO_TEAM'
             result.message = teamCode.FAIL_NO_TEAM

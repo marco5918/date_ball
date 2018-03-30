@@ -1,13 +1,14 @@
 import React from 'react';
 import { connect } from 'dva';
+import TeamComponent from '../components/Teams/Team';
+import styles from './TeamPage.css';
 
-
-function Team({location}){
+function Team({location,history}){
 
 	return (
-				<div>
-				This is Team Page!
-				</div>
+		<div className={styles.normal}>
+		<TeamComponent history={history} />
+		</div>
 	);
 }
 

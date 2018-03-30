@@ -13,6 +13,9 @@ function IndexPage({location,history}) {
   });
   const TeamPage = dynamic({
     app,
+    models:()=>[
+      import('../models/teams'),
+    ],
     component:()=>import('./TeamPage'),
   });
   const PkPage = dynamic({
