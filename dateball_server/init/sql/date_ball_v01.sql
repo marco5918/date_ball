@@ -142,7 +142,7 @@ create table player
    id                   bigint(20) not null auto_increment,
    me_id                bigint(20) not null,
    team_title           int not null comment '1=队长， 2=副队长， 3=球员',
-   status               int not null comment '1=已加入 2=已退队 3=申请入队',
+   status               int not null comment '1=已加入 2=已退队 3=申请入队 4=拒绝入队',
    game_count           int not null,
    avg_points           double not null,
    total_points         int not null,

@@ -1,11 +1,12 @@
 import React,{Component} from 'react';
 import { connect } from 'dva';
-import { ListView, WhiteSpace, ImagePicker, List, InputItem, Button, Modal } from 'antd-mobile';
+import {PullToRefresh, Toast, ListView, WhiteSpace, ImagePicker, List, InputItem, TextareaItem, Button, Modal } from 'antd-mobile';
 import { StickyContainer, Sticky } from 'react-sticky';
 import styles from './Team.css';
 import ImageHeader from './../../utils/ImageHeader';
 import TransitionGroup from '../Transition/TransitionGroup';
 import TeamInfoPage from './TeamInfoPage';
+import config from './../../../config';
 
 
 class Team extends Component{
@@ -22,6 +23,12 @@ class Team extends Component{
             teamModalListVisible: false,
             keyValue:'teamList',
             teamPlayerInfo:{},
+            modal:false,
+            create_team_name_value:'',
+            create_team_city_value:'',
+            create_team_desc_value:'',
+            error_info:null,
+            refreshing:true,
 		};
     }
     
@@ -29,25 +36,102 @@ class Team extends Component{
     }
 
     componentWillReceiveProps(nextProps){
-        if(nextProps.item !== this.props.item){
+        //if(nextProps.item !== this.props.item){
+            const {error_info} = nextProps;
             const {success, data} = nextProps.item;
             const dataBlob = {};
             if(success){
                 let team_players = data.team_players;
                 for (let i = 0; team_players !== undefined && i < team_players.length; i++) {
-                    dataBlob[`${i}`] = `row - ${i}`;
+                    if(team_players[i].team !== undefined){
+                        dataBlob[`${i}`] = `row - ${team_players[i].team.updatedAt}`;
+                    }
                 }
             }
 
             this.setState({
                 dataSource: this.state.dataSource.cloneWithRows(dataBlob),
             });
-        }
+            this.setState({ refreshing: false});
+
+            if(this.props.error_info === undefined || this.state.error_info === null){
+                this.setState({
+                    error_info:error_info
+                })
+                if(error_info !== undefined && error_info !== null && !error_info.success){
+                    Toast.fail(error_info.message);
+                }
+            }else if(error_info !== undefined  && error_info.success !== this.props.error_info.success){
+                
+                this.setState({
+                    error_info:error_info
+                })
+                if(error_info !== undefined && error_info !== null && !error_info.success){
+                    Toast.fail(error_info.message);
+                }
+            }else{
+                this.setState({
+                    error_info:null
+                })
+            }
+        //}
     }
 
 
-    gotoCreateTeam = () => {
+    showModal = key => (e) => {
+        e.preventDefault(); // 修复 Android 上点击穿透
+        this.setState({
+          [key]: true,
+        });
+    };
 
+    onClose = key => () => {
+        this.setState({
+            [key]: false,
+            error_info:null,
+            create_team_name_value:'',
+            create_team_city_value:'',
+            create_team_desc_value:'',
+        });
+    };
+
+    onCreateTeamValueChange = (key, value)=>{
+		this.setState({
+			[key]:value,
+		});
+    };
+    
+    onCreateTeam = ()=>{
+        if(this.state.create_team_name_value !== '' 
+            && this.state.create_team_city_value !== '' 
+            && this.state.create_team_desc_value !== ''){
+            
+            const id = localStorage.getItem('data_ball_id');
+
+            const values = {
+                me_id:id,
+                team_name:this.state.create_team_name_value,
+                team_city:this.state.create_team_city_value,
+                team_info:this.state.create_team_desc_value,
+            };
+    
+            this.props.dispatch({
+                type: 'team/create_team',
+                payload:{values},
+            });
+
+            this.setState({
+                modal: false,
+                error_info:null,
+                create_team_name_value:'',
+                create_team_city_value:'',
+                create_team_desc_value:'',
+            });
+
+        }else{
+            Toast.fail("请填入各项内容");
+        }
+        
     };
 
     onEventClick = (e, team_play_info) => {
@@ -60,11 +144,26 @@ class Team extends Component{
     };
 
 	onBack=(e)=>{
+        const id = {id:localStorage.getItem('data_ball_id')}
+        this.props.dispatch({
+            type: 'team/fetch_team_list',
+            payload:id
+        });
+
 		this.setState({
 			teamModalListVisible: false,
 			keyValue:'teamList',
 			animateCls:'right',
 		});
+    };
+
+    onRefresh = () => {
+        this.setState({ refreshing: true});
+        const id = {id:localStorage.getItem('data_ball_id')}
+        this.props.dispatch({
+            type: 'team/fetch_team_list',
+            payload:id
+        });
     };
     
 	render(){
@@ -78,7 +177,6 @@ class Team extends Component{
         if(this.props.headers === null || this.props.item === null){
 			return (<div></div>);
 		}else{
-
             const {success, message, data} = this.props.item;
             if(success && data.me !== undefined && data.team_players !== undefined)
 			{
@@ -101,7 +199,8 @@ class Team extends Component{
 
                 const row = (rowData, sectionID, rowID) =>{
     
-                    const obj = team_players[index++];
+                    //const obj = team_players[index++];
+                    const obj = team_players[rowID];
                     let caption_name = "";
                     let status = "(尚未加入)"
 
@@ -120,6 +219,8 @@ class Team extends Component{
                                     status = "(已退队)";
                                 }else if(info.player.status === 3){
                                     status = "(未入队)";
+                                }else if(info.player.status === 4){
+                                    status = "(已拒绝)";
                                 }
                                 flag[1] = 1;
                             }
@@ -140,11 +241,11 @@ class Team extends Component{
                                     borderBottom:'1px solid #F6F6F6',
                                 }}
                             >{obj.team.team_name+status}</div>
-                            <div style={{display:'-webkit-box flex', padding:'15px 0'}}>
-                                <img style={{height: '64px', marginRight:'15px'}} src={obj.team.team_logo} alt="球队LOGO" />
+                            <div style={{display: '-webkit-box', display: 'flex', padding:'15px 0'}}>
+                                <img style={{height: '64px', marginRight:'15px'}} src={config.api + obj.team.team_logo} alt="球队LOGO" />
                                 <div style={{lineHeight: 1}}>
                                     <div style={{ marginBottom:'8px', fontSize: 17, fontWeight:5}}>
-                                    {obj.team.team_city},比赛场次:{obj.team.match_num},球队队长:{caption_name}</div>
+                                    {obj.team.team_city},场次:{obj.team.match_num},队长:{caption_name}</div>
                                     <div>
                                         <span style={{ width:'90%', wordWrap:'break-word', whiteSpace:'normal', display: 'inline-block', fontSize: 16, color:'#888'}}>{obj.team.team_info}</span>
                                     </div>
@@ -169,6 +270,60 @@ class Team extends Component{
                                 </div>
                             </div>
 						    <div  hidden={this.state.teamModalListVisible? true:false} >
+                                <Modal
+                                    popup
+                                    visible={this.state.modal}
+                                    onClose={this.onClose('modal')}
+                                    animationType="slide-up"
+                                    >
+                                    <List renderHeader={() => <div>创建球队</div>} className="popup-list">
+                                        <List.Item>
+                                        <InputItem
+                                            key='team_name'
+                                            name='team_name'
+                                            type='text'
+                                            extra=''
+                                            placeholder='请输入球队名称'
+                                            error={this.state.hasError}
+                                            onErrorClick={this.onErrorClick}
+                                            value={this.state.create_team_name_value}
+                                            editable={true}
+                                            onChange={(val)=>{this.onCreateTeamValueChange('create_team_name_value',val)}}
+                                            clear
+                                        >球队名称</InputItem>
+                                        </List.Item>
+                                        <List.Item>
+                                        <InputItem
+                                            name='team_city'
+                                            type='text'
+                                            extra=''
+                                            placeholder='请输入球队所在城市'
+                                            error={this.state.hasError}
+                                            onErrorClick={this.onErrorClick}
+                                            value={this.state.create_team_city_value}
+                                            editable={true}
+                                            onChange={(val)=>{this.onCreateTeamValueChange('create_team_city_value',val)}}
+                                            clear
+                                        >城市</InputItem>
+                                        </List.Item>
+                                        <List.Item>
+                                        <TextareaItem
+                                            title='球队描述'
+                                            placeholder='请输入球队描述'
+                                            value={this.state.create_team_desc_value}
+                                            error={this.state.hasError}
+                                            onErrorClick={this.onErrorClick}
+                                            rows={8}
+                                            count={200}
+                                            onChange={(val)=>{this.onCreateTeamValueChange('create_team_desc_value',val)}}
+                                            clear
+                                        />
+                                        </List.Item>
+                                        <List.Item>
+                                        <Button type="primary" onClick={this.onCreateTeam}>创建</Button>
+                                        </List.Item>
+                                    </List>
+                                </Modal>
                                 <ListView
                                     ref={el => this.lv = el}
                                     dataSource={this.state.dataSource}
@@ -192,21 +347,27 @@ class Team extends Component{
                                                 style={{
                                                     ...style,
                                                     zIndex:3,
-                                                    }}><Button type="primary" onClick={this.gotoCreateTeam} >创建球队</Button></div>
+                                                    }}><Button type="primary" onClick={this.showModal('modal')} >创建球队</Button>
+                                                    </div>
                                                 )}
                                     </Sticky>
                                     )}
                                 
-                                renderHeader={()=><span></span>}
+                                renderHeader={()=>{ return (team_players !== undefined && team_players.length > 0) ? <span></span> : <Button type="primary" onClick={this.showModal('modal')} >创建球队</Button>}}
                                 renderFooter={()=>(<div style={{ padding:30, textAlign:'center'}}>
                                     没有更多了</div>)}
                                 renderRow={row}
                                 renderSeparator={separator}
-                                pageSize={1}
                                 onScroll={()=>{console.log('scroll')}}
                                 scrollEventThrottle={200}
                                 onEndReached={()=>{console.log('onEndReached')}}
                                 onEndReachedThreshold={10}
+                                initialListSize={100}
+                                pullToRefresh={<PullToRefresh
+                                    refreshing={this.state.refreshing}
+                                    onRefresh={this.onRefresh}
+                                />}
+                                
                                 />
                             </div>
                         </TransitionGroup>
@@ -222,10 +383,11 @@ class Team extends Component{
 
 
 function mapStateToProps(state){
-	const {item, headers} = state.team;
+	const {item, error_info, headers} = state.team;
 	return {
 		loading: state.loading.models.team,
-		item,
+        item,
+        error_info,
 		headers
 	};
 }

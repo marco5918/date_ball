@@ -48,7 +48,7 @@ class TeamEditPage extends Component {
 	};
 
 	render(){
-		const { title, editname, name, value, type, placeholder, extra } = this.props;
+		const { title, editname, name, value, type, placeholder, extra, disableSubmit } = this.props;
 		let content;
 		const img_src = config.api + value;
 		if(type === 'img'){
@@ -67,6 +67,7 @@ class TeamEditPage extends Component {
 				rows={8}
 				count={200}
 				onChange={this.onChange}
+				disabled={disableSubmit}
 				clear
           	/>
 		}else{
@@ -82,6 +83,7 @@ class TeamEditPage extends Component {
 				onChange={this.onChange}
 				ref={el => this.autoFocusInst = el}
 				clear
+				disabled={disableSubmit}
 			>{editname}</InputItem>
 		}
 
@@ -94,7 +96,9 @@ class TeamEditPage extends Component {
 				rightContent={[
 					<Button key="0" type="primary" size="small" 
 					inline
-					onClick={(e)=>this.submitHandler(name)} >
+					disabled={disableSubmit}
+					onClick={(e)=>this.submitHandler(name)} 
+					>
 					提交</Button>,
 				]}
 			>{title}</NavBar>

@@ -90,14 +90,14 @@ class MainLayout extends React.Component {
 			          <TabBar.Item
 			            icon={{ uri: 'https://zos.alipayobjects.com/rmsportal/asJMfBrNqpMMlVpeInPQ.svg' }}
 			            selectedIcon={{ uri: 'https://zos.alipayobjects.com/rmsportal/gjpzzcrPMkhfEqgbYvmN.svg' }}
-			            title="球场"
-			            key="Court"
-			            selected={this.props.location.pathname === '/court'}
+			            title="消息"
+			            key="Message"
+			            selected={this.props.location.pathname === '/message'}
 			            onPress={() => {
-			              history.push('/court');
+			              history.push('/message');
 			            }}
 			          >
-			            {this.props.location.pathname === '/court' ? this.props.children : null }
+			            {this.props.location.pathname === '/message' ? this.props.children : null }
 			          </TabBar.Item>
 			          <TabBar.Item
 			            icon={{ uri: 'https://zos.alipayobjects.com/rmsportal/asJMfBrNqpMMlVpeInPQ.svg' }}

@@ -91,7 +91,7 @@ class Login extends Component{
                 <WhiteSpace size="xl" />
                 <Button type="primary" onClick={this.submit} >登录</Button><WhiteSpace />
                 <WhiteSpace size="xl" />
-                <div align="center"><Link to = "/signup" >注册</Link></div>
+                <div align="center"><Link to = "/signup" className={styles.link} >注 册</Link></div>
             </List>
         </div>
         );

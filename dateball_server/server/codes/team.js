@@ -14,6 +14,8 @@ const teamCode = {
   
     FAIL_TEAM_NO_EXIST: '没有该球队',
 
+    FAIL_TEAM_DEL_FAIL: '删除球队出错',
+
     FAIL_NO_PLAYER: '没有球员存在',
 
     FAIL_PLAYER_NO_EXIST: '没有该球员',

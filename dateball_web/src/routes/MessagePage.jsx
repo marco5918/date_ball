@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'dva';
 
-function Court({location}){
+function Message({location}){
 
 	return (
 				<div>
-				This is Court Page!
+				This is Message Page!
 				</div>
 	);
 }
 
-export default connect()(Court);
+export default connect()(Message);

@@ -5,14 +5,14 @@ let MeModel = model.me,
     TeamModel = model.team,
     PlayerModel = model.player
 
-MeModel.hasOne(HobbyBasketballInfoModel)
-HobbyBasketballInfoModel.belongsTo(MeModel)
+MeModel.hasOne(HobbyBasketballInfoModel, { onDelete: 'cascade', hooks: true })
+HobbyBasketballInfoModel.belongsTo(MeModel, { onDelete: 'cascade', hooks: true })
 
-MeModel.hasMany(PlayerModel)
-PlayerModel.belongsTo(MeModel)
+MeModel.hasMany(PlayerModel, { onDelete: 'cascade', hooks: true })
+PlayerModel.belongsTo(MeModel, { onDelete: 'cascade', hooks: true })
 
-TeamModel.hasMany(PlayerModel)
-PlayerModel.belongsTo(TeamModel)
+TeamModel.hasMany(PlayerModel, { onDelete: 'cascade', hooks: true })
+PlayerModel.belongsTo(TeamModel, { onDelete: 'cascade', hooks: true })
 
 TeamModel.sync()
 PlayerModel.sync()

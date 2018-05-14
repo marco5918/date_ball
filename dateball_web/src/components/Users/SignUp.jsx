@@ -4,7 +4,7 @@ import {List, InputItem, WhiteSpace, Button} from 'antd-mobile';
 import { Link } from 'dva/router';
 import {createForm} from 'rc-form';
 import queryString from 'query-string';
-import styles from './SignUp.css';
+import styles from './Login.css';
 
 class SignUp extends Component{
     constructor(props){
@@ -164,7 +164,7 @@ class SignUp extends Component{
                 <WhiteSpace size="xl" />
                 <Button type="primary" onClick={this.submit} >注册</Button><WhiteSpace />
                 <WhiteSpace size="xl" />
-                <div align="center" ><Link to = "/login" >返回登录</Link></div>
+                <div align="center" ><Link className={styles.link} to = "/login" >返回登录</Link></div>
             </List>
         </div>
         );
