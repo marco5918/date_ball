@@ -1,6 +1,8 @@
 const Router = require('koa-router')
 const userInfoController = require('./../controllers/user-info')
 const teamInfoController = require('./../controllers/team-info')
+const pkInfoController = require('./../controllers/pk-info')
+const courtInfoController = require('./../controllers/court-info')
 
 const router = new Router()
 const routers = router
@@ -25,6 +27,16 @@ const routers = router
     .get('/player/getPlayerInfo.json', teamInfoController.getPlayerInfo)
     .post('/player/createPlayer.json', teamInfoController.createPlayer)
     .patch('/player/updatePlayerInfo.json', teamInfoController.updatePlayerInfo)
+    .get('/pk/getPkList.json', pkInfoController.getPkList)
+    .post('/pk/createPk.json', pkInfoController.createPk)
+    .patch('/pk/updatePk.json', pkInfoController.updatePk)
+    .delete('/pk/removePk.json', pkInfoController.removePk)
+    .post('/pk/replyPk.json', pkInfoController.replyPk)
+    .get('/court/getCourtList.json', courtInfoController.getCourtList)
+    .post('/court/createCourt.json', courtInfoController.createCourt)
+    .patch('/court/updateCourt.json', courtInfoController.updateCourt)
+    .delete('/court/removeCourt.json', courtInfoController.removeCourt)
+    .post('/court/uploadCourtImg.json', courtInfoController.uploadCourtImg)
 
 
 module.exports = routers

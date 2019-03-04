@@ -23,6 +23,7 @@ create table court
    contact              varchar(255) not null,
    remark               varchar(1024),
    position             varchar(255) not null,
+   meId                 bigint(20) not null,
    primary key (id)
 );
 
@@ -120,9 +121,9 @@ create table pk
 (
    id                   bigint(20) not null auto_increment,
    select_self_team     bigint(20) not null,
-   select_team          bigint(20),
+   select_pk_team       bigint(20),
    select_court         bigint(20) not null,
-   type                 int not null comment '1=队内训练
+   pk_type                 int not null comment '1=队内训练
             2=约战',
    reply                int comment '1=未答复
             2=同意

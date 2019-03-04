@@ -22,6 +22,10 @@ function IndexPage({ location, history }) {
     });
     const PkPage = dynamic({
         app,
+        models: () => [
+            import ('../models/pk'),
+            import ('../models/teams'),
+        ],
         component: () =>
             import ('./PkPage'),
     });

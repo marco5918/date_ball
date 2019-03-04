@@ -12,40 +12,40 @@ module.exports = {
 
     async verifyToken(ctx, next) {
 
-        if (ctx.path.match("signIn.json") == null && ctx.path.match('signUp.json') == null) {
-            const token = ctx.header["x-access-token"];
-            if (token) {
-                try {
-                    let decoded = jwt_decode(token);
-                    if (decoded) {
-                        console.log("decoded token", decoded.exp);
-                        if (decoded.exp <= Date.now()) {
-                            ctx.response.status = 401;
-                            ctx.response.message = "token expired";
-                            ctx.body = "token expired";
-                            return;
-                        }
-                    } else {
-                        ctx.response.status = 401;
-                        ctx.response.message = "invalidate token";
-                        ctx.body = "invalidate token";
-                        return;
-                    }
+        // if (ctx.path.match("signIn.json") == null && ctx.path.match('signUp.json') == null) {
+        //     const token = ctx.header["x-access-token"];
+        //     if (token) {
+        //         try {
+        //             let decoded = jwt_decode(token);
+        //             if (decoded) {
+        //                 console.log("decoded token", decoded.exp);
+        //                 if (decoded.exp <= Date.now()) {
+        //                     ctx.response.status = 401;
+        //                     ctx.response.message = "token expired";
+        //                     ctx.body = "token expired";
+        //                     return;
+        //                 }
+        //             } else {
+        //                 ctx.response.status = 401;
+        //                 ctx.response.message = "invalidate token";
+        //                 ctx.body = "invalidate token";
+        //                 return;
+        //             }
 
-                } catch (err) {
-                    ctx.response.status = 401;
-                    ctx.response.message = err.message;
-                    ctx.body = err.message;
-                    return;
-                }
-            } else {
-                ctx.response.status = 401;
-                ctx.response.message = "token is empty";
-                ctx.body = "token is none";
+        //         } catch (err) {
+        //             ctx.response.status = 401;
+        //             ctx.response.message = err.message;
+        //             ctx.body = err.message;
+        //             return;
+        //         }
+        //     } else {
+        //         ctx.response.status = 401;
+        //         ctx.response.message = "token is empty";
+        //         ctx.body = "token is none";
 
-                return;
-            }
-        }
+        //         return;
+        //     }
+        // }
 
         return next();
     },

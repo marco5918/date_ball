@@ -1,12 +1,14 @@
 import React from 'react';
 import { connect } from 'dva';
+import PkComponent from '../components/Pk/Pk';
+import styles from './PkPage.css';
 
-function Pk({location}){
+function Pk({location,history}){
 
 	return (
-				<div>
-				This is Pk Page!
-				</div>
+		<div className={styles.normal}>
+		<PkComponent history={history} />
+		</div>
 	);
 }
 

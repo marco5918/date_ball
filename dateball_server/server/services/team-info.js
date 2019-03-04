@@ -1,5 +1,5 @@
 /***
- * 用户业务操作
+ * 球队业务操作
  */
 
 const validator = require('validator')

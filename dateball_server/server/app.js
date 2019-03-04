@@ -31,13 +31,14 @@ app.use(cors({
       console.log(ctx.url.match('/api/'))
       return "*";//允许来自所有的域名请求
     }
+    return "*";
     return 'http://localhost:3002';
   },
   exposeHeaders:['WWW-Authenticate','Server-Authorization'],
   maxAge: 5,
   credentials:true,
-  allowMethods:['GET','POST','PATCH','DELETE'],
-  allowHeaders:['Content-Type','Authorization','Accept'],
+  allowMethods:['GET','POST','PATCH','DELETE','OPTIONS'],
+  allowHeaders:['Content-Type','Authorization','Accept','x-requested-with'],
 }))
 
 app.use(session({
@@ -49,7 +50,7 @@ app.use(koaLogger())
 log4js.configure(config.log)
 var logger = log4js.getLogger('common')
 global.logger = logger;
-app.use(bodyParser({
+app.use(bodyParser({                                                                
   formLimit:'3mb',
   jsonLimit:'10mb',
   textLimit:'3mb',
